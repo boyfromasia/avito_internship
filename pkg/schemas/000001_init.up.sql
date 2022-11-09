@@ -15,11 +15,20 @@ CREATE TABLE Purchases
 
 CREATE TABLE Orders
 (
-    OrderId         SERIAL         PRIMARY KEY,
+    OrderId         int            PRIMARY KEY,
     UserId          int            REFERENCES Users     (UserId)      NOT NULL,
     PurchaseId      int            REFERENCES Purchases (PurchaseId),
     Price           float          NOT NULL,
-    Comment         varchar(255)   NOT NULL,
     TimeCreated     timestamp      NOT NULL,
     StatusOrder     varchar(255)   NOT NULL
+);
+
+
+CREATE TABLE HistoryUser
+(
+    HistoryId       SERIAL         PRIMARY KEY,
+    UserId          int            REFERENCES  Users    (UserId)      NOT NULL,
+    Cost            varchar(255)   NOT NULL,
+    Comment         varchar(255)   NOT NULL,
+    TimeCreated     timestamp      NOT NULL
 );

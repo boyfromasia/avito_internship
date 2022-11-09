@@ -1,6 +1,6 @@
 package models
 
-type Purchase struct {
+type GetPurchaseRequest struct {
 	PurchaseId int    `json:"purchase_id"`
 	Name       string `json:"name"`
 }

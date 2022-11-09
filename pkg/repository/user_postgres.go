@@ -2,6 +2,7 @@ package repository
 
 import (
 	"avito_internship/pkg/models"
+	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 )
@@ -49,7 +50,7 @@ func (r *UserPostgres) AddBalanceUser(user models.UserAddBalanceRequest) (models
 		row := r.db.QueryRow(query, user.Balance, user.UserId)
 
 		if err := row.Scan(&id); err != nil {
-			response.Status = "Error with updating user table"
+			response.Status = "Error"
 			return response, err
 		}
 	} else {
@@ -57,11 +58,42 @@ func (r *UserPostgres) AddBalanceUser(user models.UserAddBalanceRequest) (models
 		row := r.db.QueryRow(query, user.UserId, user.Balance)
 
 		if err := row.Scan(&id); err != nil {
-			response.Status = "Error with inserting user table"
+			response.Status = "Error"
 			return response, err
 		}
 	}
 
+	response.Status = "OK"
+	return response, nil
+}
+
+func (r *UserPostgres) ReserveMoneyUser(user models.UserReserveMoneyRequest) (models.UserReserveMoneyResponse, error) {
+	var response models.UserReserveMoneyResponse
+	var flagExist bool
+	var balance, reserve float64
+
+	rowExist := fmt.Sprintf("SELECT EXISTS(SELECT * from %s WHERE userid=$1)", usersTable)
+	queryExist := r.db.QueryRow(rowExist, user.UserId)
+
+	if err := queryExist.Scan(&flagExist); err != nil {
+		response.Status = "Error"
+		return response, err
+	}
+
+	query := fmt.Sprintf("SELECT balance, reserve from %s WHERE userid=$1", usersTable)
+	row := r.db.QueryRow(query, user.UserId)
+
+	if err := row.Scan(&balance, &reserve); err != nil {
+		response.Status = "Error"
+		return response, err
+	}
+
+	if balance-reserve-user.Price < 0 {
+		response.Status = "Error"
+		return response, errors.New("Error, not enough money")
+	}
+
+	r.db.QueryRow(fmt.Sprintf("UPDATE %s SET reserve=reserve + $1 WHERE userid=$2 RETURNING userid", usersTable), user.Price, user.UserId)
 	response.Status = "OK"
 	return response, nil
 }

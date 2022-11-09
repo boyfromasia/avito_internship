@@ -3,6 +3,7 @@ package service
 import (
 	"avito_internship/pkg/models"
 	"avito_internship/pkg/repository"
+	"time"
 )
 
 type OrderService struct {
@@ -14,13 +15,8 @@ func NewOrderService(repo repository.Order) *OrderService {
 }
 
 func (s *OrderService) AddRecord(record models.AddRecordRequest) (models.AddRecordResponse, error) {
-	var isAdd bool
+	record.TimeCreated = time.Now()
+	record.StatusOrder = "waited"
 
-	if record.PurchaseId == -1 {
-		isAdd = true
-	} else {
-		isAdd = false
-	}
-
-	return s.repo.AddRecord(record, isAdd)
+	return s.repo.AddRecordOrder(record)
 }

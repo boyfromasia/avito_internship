@@ -20,3 +20,7 @@ func (s *UserService) GetBalanceUser(user models.UserGetBalanceRequest) (models.
 func (s *UserService) AddBalanceUser(user models.UserAddBalanceRequest) (models.UserAddBalanceResponse, error) {
 	return s.repo.AddBalanceUser(user)
 }
+
+func (s *UserService) ReserveMoneyUser(user models.UserReserveMoneyRequest) (models.UserReserveMoneyResponse, error) {
+	return s.repo.ReserveMoneyUser(user)
+}

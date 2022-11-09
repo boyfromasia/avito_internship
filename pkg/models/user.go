@@ -17,4 +17,17 @@ type UserAddBalanceResponse struct {
 	Status string `json:"status"`
 }
 
-//type UserReserve
+type UserReserveMoneyRequest struct {
+	UserId int     `json:"user_id" binding:"required"`
+	Price  float64 `json:"price" binding:"required"`
+}
+
+type UserReserveMoneyResponse struct {
+	Status string `json:"status"`
+}
+
+type UserApproveMoneyRequest struct {
+}
+
+type UserApproveMoneyResponse struct {
+}

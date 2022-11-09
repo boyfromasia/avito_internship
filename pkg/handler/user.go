@@ -2,9 +2,9 @@ package handler
 
 import (
 	"avito_internship/pkg/models"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"time"
 )
 
 func (h *Handler) GetBalanceUser(c *gin.Context) {
@@ -28,30 +28,29 @@ func (h *Handler) GetBalanceUser(c *gin.Context) {
 func (h *Handler) AddBalanceUser(c *gin.Context) {
 	var requestUser models.UserAddBalanceRequest
 	var responseUser models.UserAddBalanceResponse
-	var _ models.AddRecordResponse
+	var _ models.AddHistoryResponse
 
 	if err := c.BindJSON(&requestUser); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	// add to balance
 	responseUser, errUser := h.services.User.AddBalanceUser(requestUser)
 	if errUser != nil {
 		newErrorResponse(c, http.StatusInternalServerError, errUser.Error())
 		return
 	}
 
-	_, errOrder := h.services.Order.AddRecord(models.AddRecordRequest{
-		UserId:      requestUser.UserId,
-		PurchaseId:  -1,
-		Price:       requestUser.Balance,
-		Comment:     "Add to balance",
-		TimeCreated: time.Now(),
-		StatusOrder: "approved",
+	// create record in historyUser
+	_, errHist := h.services.HistoryUser.AddRecordHistory(models.AddHistoryRequest{
+		UserId:  requestUser.UserId,
+		Comment: "Add to balance from persona X",
+		Cost:    fmt.Sprintf("+%f", requestUser.Balance),
 	})
 
-	if errOrder != nil {
-		newErrorResponse(c, http.StatusInternalServerError, errOrder.Error())
+	if errHist != nil {
+		newErrorResponse(c, http.StatusInternalServerError, errHist.Error())
 		return
 	}
 

@@ -14,26 +14,17 @@ func NewOrderPostgres(db *sqlx.DB) *OrderPostgres {
 	return &OrderPostgres{db: db}
 }
 
-func (r *OrderPostgres) AddRecord(record models.AddRecordRequest, isAdd bool) (models.AddRecordResponse, error) {
+func (r *OrderPostgres) AddRecordOrder(record models.AddRecordRequest) (models.AddRecordResponse, error) {
 	var response models.AddRecordResponse
 	var id int
 
-	query := fmt.Sprintf("INSERT INTO %s (userid, purchaseid, price, comment, timecreated, statusorder)"+
+	query := fmt.Sprintf("INSERT INTO %s (orderid, userid, purchaseid, price, timecreated, statusorder)"+
 		" VALUES ($1, $2, $3, $4, $5, $6) RETURNING orderid", orderTable)
 
-	if isAdd {
-		row := r.db.QueryRow(query, record.UserId, nil, record.Price, record.Comment, record.TimeCreated, record.StatusOrder)
-		if err := row.Scan(&id); err != nil {
-			response.OrderId = -1
-			return response, err
-		}
-
-	} else {
-		row := r.db.QueryRow(query, record.UserId, record.PurchaseId, record.Price, record.Comment, record.TimeCreated, record.StatusOrder)
-		if err := row.Scan(&id); err != nil {
-			response.OrderId = -1
-			return response, err
-		}
+	row := r.db.QueryRow(query, record.OrderId, record.UserId, record.PurchaseId, record.Price, record.TimeCreated, record.StatusOrder)
+	if err := row.Scan(&id); err != nil {
+		response.OrderId = -1
+		return response, err
 	}
 
 	response.OrderId = id
