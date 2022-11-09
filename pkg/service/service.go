@@ -6,14 +6,15 @@ import (
 )
 
 type User interface {
-	GetBalanceUser(user models.UserGetBalance) (models.UserGetBalanceResponse, error)
-	AddBalanceUser(user models.UserAddBalance) (models.UserAddBalanceResponse, error)
+	GetBalanceUser(user models.UserGetBalanceRequest) (models.UserGetBalanceResponse, error)
+	AddBalanceUser(user models.UserAddBalanceRequest) (models.UserAddBalanceResponse, error)
 }
 
 type Purchase interface {
 }
 
 type Order interface {
+	AddRecord(record models.AddRecordRequest) (models.AddRecordResponse, error)
 }
 
 type Service struct {
@@ -24,6 +25,7 @@ type Service struct {
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
-		User: NewUserService(repos.User),
+		User:  NewUserService(repos.User),
+		Order: NewOrderService(repos.Order),
 	}
 }

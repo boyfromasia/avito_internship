@@ -4,7 +4,6 @@ import (
 	"avito_internship/pkg/models"
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"time"
 )
 
 type UserPostgres struct {
@@ -15,7 +14,7 @@ func NewUserPostgres(db *sqlx.DB) *UserPostgres {
 	return &UserPostgres{db: db}
 }
 
-func (r *UserPostgres) GetBalanceUser(user models.UserGetBalance) (models.UserGetBalanceResponse, error) {
+func (r *UserPostgres) GetBalanceUser(user models.UserGetBalanceRequest) (models.UserGetBalanceResponse, error) {
 	var response models.UserGetBalanceResponse
 	var balance float64
 
@@ -32,7 +31,7 @@ func (r *UserPostgres) GetBalanceUser(user models.UserGetBalance) (models.UserGe
 	return response, nil
 }
 
-func (r *UserPostgres) AddBalanceUser(user models.UserAddBalance) (models.UserAddBalanceResponse, error) {
+func (r *UserPostgres) AddBalanceUser(user models.UserAddBalanceRequest) (models.UserAddBalanceResponse, error) {
 	var response models.UserAddBalanceResponse
 	var flagExist bool
 	var id int
@@ -61,15 +60,6 @@ func (r *UserPostgres) AddBalanceUser(user models.UserAddBalance) (models.UserAd
 			response.Status = "Error with inserting user table"
 			return response, err
 		}
-	}
-
-	queryOrder := fmt.Sprintf("INSERT INTO %s (userid, purchaseid, price, comment, timecreated, statusorder)"+
-		" VALUES ($1, $2, $3, $4, $5, $6) RETURNING orderid", orderTable)
-	rowOrder := r.db.QueryRow(queryOrder, user.UserId, nil, user.Balance, "adding to balance", time.Now(), "approved")
-
-	if err := rowOrder.Scan(&id); err != nil {
-		response.Status = "Error with inserting order table"
-		return response, err
 	}
 
 	response.Status = "OK"

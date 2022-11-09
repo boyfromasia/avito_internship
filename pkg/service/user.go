@@ -13,10 +13,10 @@ func NewUserService(repo repository.User) *UserService {
 	return &UserService{repo: repo}
 }
 
-func (s *UserService) GetBalanceUser(user models.UserGetBalance) (models.UserGetBalanceResponse, error) {
+func (s *UserService) GetBalanceUser(user models.UserGetBalanceRequest) (models.UserGetBalanceResponse, error) {
 	return s.repo.GetBalanceUser(user)
 }
 
-func (s *UserService) AddBalanceUser(user models.UserAddBalance) (models.UserAddBalanceResponse, error) {
+func (s *UserService) AddBalanceUser(user models.UserAddBalanceRequest) (models.UserAddBalanceResponse, error) {
 	return s.repo.AddBalanceUser(user)
 }

@@ -1,8 +1,18 @@
 package models
 
-type Order struct {
-	OrderId   int `json:"order_id"`
-	UserId    int `json:"user_id"`
-	ServiceId int `json:"service_id"`
-	Price     int `json:"price"`
+import (
+	"time"
+)
+
+type AddRecordRequest struct {
+	UserId      int       `json:"user_id" binding:"required"`
+	PurchaseId  int       `json:"purchase_id" binding:"required"`
+	Price       float64   `json:"price" binding:"required"`
+	Comment     string    `json:"comment" binding:"required"`
+	TimeCreated time.Time `json:"time_created" binding:"required"`
+	StatusOrder string    `json:"status_order" binding:"required"`
+}
+
+type AddRecordResponse struct {
+	OrderId int `json:"order_id"`
 }
