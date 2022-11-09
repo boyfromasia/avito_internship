@@ -20,7 +20,7 @@ CREATE TABLE Orders
     PurchaseId      int            REFERENCES Purchases (PurchaseId),
     Price           float          NOT NULL,
     TimeCreated     timestamp      NOT NULL,
-    StatusOrder     varchar(255)   NOT NULL
+    Status     varchar(255)   NOT NULL
 );
 
 
@@ -32,3 +32,9 @@ CREATE TABLE HistoryUser
     Comment         varchar(255)   NOT NULL,
     TimeCreated     timestamp      NOT NULL
 );
+
+INSERT INTO Purchases (PurchaseId, Name) VALUES ('1', 'Candy');
+
+INSERT INTO Purchases (PurchaseId, Name) VALUES ('2', 'Beer');
+
+

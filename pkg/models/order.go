@@ -11,11 +11,11 @@ type AddRecordRequest struct {
 	PurchaseId  int       `json:"purchase_id" binding:"required"`
 	Price       float64   `json:"price" binding:"required"`
 	TimeCreated time.Time `json:"time_created"`
-	StatusOrder string    `json:"status_order"`
+	Status      string    `json:"status"`
 }
 
 type AddRecordResponse struct {
-	OrderId int `json:"order_id"`
+	Status string `json:"status"`
 }
 
 type DecisionReserveRequest struct {
@@ -39,7 +39,7 @@ func (i AddRecordRequest) Validate() error {
 }
 
 func (i DecisionReserveRequest) Validate() error {
-	if !(i.Decision == "approved" || i.Decision == "canceled") {
+	if !(i.Decision == "approved" || i.Decision == "cancelled") {
 		return errors.New("Wrong input - 'decision'")
 	}
 	return nil

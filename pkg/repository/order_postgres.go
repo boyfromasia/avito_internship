@@ -19,16 +19,16 @@ func (r *OrderPostgres) AddRecordOrder(record models.AddRecordRequest) (models.A
 	var response models.AddRecordResponse
 	var id int
 
-	query := fmt.Sprintf("INSERT INTO %s (orderid, userid, purchaseid, price, timecreated, statusorder)"+
+	query := fmt.Sprintf("INSERT INTO %s (orderid, userid, purchaseid, price, timecreated, status)"+
 		" VALUES ($1, $2, $3, $4, $5, $6) RETURNING orderid", orderTable)
 
-	row := r.db.QueryRow(query, record.OrderId, record.UserId, record.PurchaseId, record.Price, record.TimeCreated, record.StatusOrder)
+	row := r.db.QueryRow(query, record.OrderId, record.UserId, record.PurchaseId, record.Price, record.TimeCreated, record.Status)
 	if err := row.Scan(&id); err != nil {
-		response.OrderId = -1
+		response.Status = "Error"
 		return response, err
 	}
 
-	response.OrderId = id
+	response.Status = "OK"
 
 	return response, nil
 }
@@ -51,7 +51,7 @@ func (r *OrderPostgres) DecisionReserveUser(decision models.DecisionReserveReque
 		response.Status = "Error"
 		return response, errors.New("Error, this order doesn't exist")
 	} else {
-		query := fmt.Sprintf("SELECT statusorder FROM %s WHERE orderid=$1 AND userid=$2 AND purchaseid=$3 AND price=$4", orderTable)
+		query := fmt.Sprintf("SELECT status FROM %s WHERE orderid=$1 AND userid=$2 AND purchaseid=$3 AND price=$4", orderTable)
 		row := r.db.QueryRow(query, decision.OrderId, decision.UserId, decision.PurchaseId, decision.Price)
 		if err := row.Scan(&status); err != nil {
 			response.Status = "Error"
@@ -59,7 +59,7 @@ func (r *OrderPostgres) DecisionReserveUser(decision models.DecisionReserveReque
 		}
 
 		if status == "waited" {
-			query := fmt.Sprintf("UPDATE %s SET statusorder=$1 WHERE orderid=$2 AND userid=$3 AND purchaseid=$4 AND price=$5 RETURNING orderid", orderTable)
+			query := fmt.Sprintf("UPDATE %s SET status=$1 WHERE orderid=$2 AND userid=$3 AND purchaseid=$4 AND price=$5 RETURNING orderid", orderTable)
 			row := r.db.QueryRow(query, decision.Decision, decision.OrderId, decision.UserId, decision.PurchaseId, decision.Price)
 
 			if err := row.Scan(&id); err != nil {
@@ -70,7 +70,7 @@ func (r *OrderPostgres) DecisionReserveUser(decision models.DecisionReserveReque
 			return response, nil
 		} else {
 			response.Status = "Error"
-			return response, errors.New("This order has already already processed")
+			return response, errors.New("This order has already processed")
 		}
 	}
 }

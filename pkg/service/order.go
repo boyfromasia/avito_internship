@@ -18,12 +18,12 @@ func (s *OrderService) AddRecord(record models.AddRecordRequest) (models.AddReco
 	var response models.AddRecordResponse
 
 	if err := record.Validate(); err != nil {
-		response.OrderId = -1
+		response.Status = "Error"
 		return response, err
 	}
 
 	record.TimeCreated = time.Now()
-	record.StatusOrder = "waited"
+	record.Status = "waited"
 
 	return s.repo.AddRecordOrder(record)
 }
