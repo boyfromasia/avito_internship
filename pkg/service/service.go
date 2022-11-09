@@ -7,8 +7,10 @@ import (
 
 type User interface {
 	GetBalanceUser(user models.UserGetBalanceRequest) (models.UserGetBalanceResponse, error)
-	AddBalanceUser(user models.UserAddBalanceRequest) (models.UserAddBalanceResponse, error)
-	ReserveMoneyUser(user models.UserReserveMoneyRequest) (models.UserReserveMoneyResponse, error)
+	AddBalanceUser(user models.UserAddBalanceRequest) (models.StatusResponse, error)
+	ReserveMoneyUser(user models.UserReserveMoneyRequest) (models.StatusResponse, error)
+	ApproveReserveUser(user models.UserDecisionRequest) (models.StatusResponse, error)
+	RejectReserveUser(user models.UserDecisionRequest) (models.StatusResponse, error)
 }
 
 type Purchase interface {
@@ -17,6 +19,7 @@ type Purchase interface {
 
 type Order interface {
 	AddRecord(record models.AddRecordRequest) (models.AddRecordResponse, error)
+	DecisionReserveUser(decision models.DecisionReserveRequest) (models.DecisionReserveResponse, error)
 }
 
 type HistoryUser interface {

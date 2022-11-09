@@ -1,5 +1,7 @@
 package models
 
+import "errors"
+
 type UserGetBalanceRequest struct {
 	UserId int `json:"user_id" binding:"required"`
 }
@@ -13,7 +15,7 @@ type UserAddBalanceRequest struct {
 	Balance float64 `json:"balance" binding:"required"`
 }
 
-type UserAddBalanceResponse struct {
+type StatusResponse struct {
 	Status string `json:"status"`
 }
 
@@ -22,12 +24,15 @@ type UserReserveMoneyRequest struct {
 	Price  float64 `json:"price" binding:"required"`
 }
 
-type UserReserveMoneyResponse struct {
-	Status string `json:"status"`
+type UserDecisionRequest struct {
+	UserId int     `json:"user_id" binding:"required"`
+	Cost   float64 `json:"cost" binding:"required"`
 }
 
-type UserApproveMoneyRequest struct {
-}
+func (i UserAddBalanceRequest) Validate() error {
+	if i.Balance < 0 {
+		return errors.New("Wrong input - 'balance'")
+	}
 
-type UserApproveMoneyResponse struct {
+	return nil
 }

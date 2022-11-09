@@ -19,14 +19,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.GET("/user", h.GetBalanceUser)
 	router.POST("/user", h.AddBalanceUser)
 	router.POST("/order/create", h.CreateOrder)
-	router.POST("/order/approve", h.ApproveOrder)
-
-	//order := router.Group("/order")
-	//{
-	//	order.POST("/")
-	//}
-	//
-	//service := router.Group("/service")
+	router.POST("/order/decision", h.DecisionOrder)
 
 	return router
 }

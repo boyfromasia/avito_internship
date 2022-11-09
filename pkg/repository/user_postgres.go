@@ -18,22 +18,29 @@ func NewUserPostgres(db *sqlx.DB) *UserPostgres {
 func (r *UserPostgres) GetBalanceUser(user models.UserGetBalanceRequest) (models.UserGetBalanceResponse, error) {
 	var response models.UserGetBalanceResponse
 	var balance float64
+	var flagExist bool
 
-	query := fmt.Sprintf("SELECT balance from %s WHERE userid=$1", usersTable)
+	query := fmt.Sprintf("SELECT EXISTS(SELECT * from %s WHERE userid=$1)", usersTable)
 	row := r.db.QueryRow(query, user.UserId)
 
-	if err := row.Scan(&balance); err != nil {
+	if err := row.Scan(&flagExist); err != nil {
 		response.Balance = 0
 		return response, err
 	}
 
-	response.Balance = balance
+	if !flagExist {
+		response.Balance = 0
+		return response, errors.New("Error, wrong id of user")
+	} else {
+		r.db.QueryRow(fmt.Sprintf("SELECT balance from %s WHERE userid=$1", usersTable), user.UserId).Scan(&balance)
+		response.Balance = balance
+		return response, nil
+	}
 
-	return response, nil
 }
 
-func (r *UserPostgres) AddBalanceUser(user models.UserAddBalanceRequest) (models.UserAddBalanceResponse, error) {
-	var response models.UserAddBalanceResponse
+func (r *UserPostgres) AddBalanceUser(user models.UserAddBalanceRequest) (models.StatusResponse, error) {
+	var response models.StatusResponse
 	var flagExist bool
 	var id int
 
@@ -67,8 +74,8 @@ func (r *UserPostgres) AddBalanceUser(user models.UserAddBalanceRequest) (models
 	return response, nil
 }
 
-func (r *UserPostgres) ReserveMoneyUser(user models.UserReserveMoneyRequest) (models.UserReserveMoneyResponse, error) {
-	var response models.UserReserveMoneyResponse
+func (r *UserPostgres) ReserveMoneyUser(user models.UserReserveMoneyRequest) (models.StatusResponse, error) {
+	var response models.StatusResponse
 	var flagExist bool
 	var balance, reserve float64
 
@@ -94,6 +101,38 @@ func (r *UserPostgres) ReserveMoneyUser(user models.UserReserveMoneyRequest) (mo
 	}
 
 	r.db.QueryRow(fmt.Sprintf("UPDATE %s SET reserve=reserve + $1 WHERE userid=$2 RETURNING userid", usersTable), user.Price, user.UserId)
+	response.Status = "OK"
+	return response, nil
+}
+
+func (r *UserPostgres) ApproveReserveUser(user models.UserDecisionRequest) (models.StatusResponse, error) {
+	var response models.StatusResponse
+	var id int
+
+	query := fmt.Sprintf("UPDATE %s SET reserve=reserve - $1, balance=balance - $1 WHERE userid=$2 RETURNING userid", usersTable)
+	row := r.db.QueryRow(query, user.Cost, user.UserId)
+
+	if err := row.Scan(&id); err != nil {
+		response.Status = "Error"
+		return response, err
+	}
+
+	response.Status = "OK"
+	return response, nil
+}
+
+func (r *UserPostgres) RejectReserveUser(user models.UserDecisionRequest) (models.StatusResponse, error) {
+	var response models.StatusResponse
+	var id int
+
+	query := fmt.Sprintf("UPDATE %s SET reserve=reserve - $1 WHERE userid=$2 RETURNING userid", usersTable)
+	row := r.db.QueryRow(query, user.Cost, user.UserId)
+
+	if err := row.Scan(&id); err != nil {
+		response.Status = "Error"
+		return response, err
+	}
+
 	response.Status = "OK"
 	return response, nil
 }

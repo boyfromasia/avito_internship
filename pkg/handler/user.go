@@ -27,7 +27,7 @@ func (h *Handler) GetBalanceUser(c *gin.Context) {
 
 func (h *Handler) AddBalanceUser(c *gin.Context) {
 	var requestUser models.UserAddBalanceRequest
-	var responseUser models.UserAddBalanceResponse
+	var responseUser models.StatusResponse
 	var _ models.AddHistoryResponse
 
 	if err := c.BindJSON(&requestUser); err != nil {

@@ -16,6 +16,5 @@ func NewHistoryUserService(repo repository.HistoryUser) *HistoryUserService {
 
 func (s *HistoryUserService) AddRecordHistory(record models.AddHistoryRequest) (models.AddHistoryResponse, error) {
 	record.TimeCreated = time.Now()
-
 	return s.repo.AddRecordHistory(record)
 }

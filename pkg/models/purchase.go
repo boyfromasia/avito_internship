@@ -5,5 +5,5 @@ type GetPurchaseRequest struct {
 }
 
 type GetPurchaseResponse struct {
-	Status string `json:"status"`
+	Name string `json:"name"`
 }

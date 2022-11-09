@@ -18,21 +18,22 @@ func NewPurchasePostgres(db *sqlx.DB) *PurchasePostgres {
 func (r *PurchasePostgres) GetPurchase(purchase models.GetPurchaseRequest) (models.GetPurchaseResponse, error) {
 	var response models.GetPurchaseResponse
 	var flagExist bool
+	var name string
 
 	query := fmt.Sprintf("SELECT EXISTS(SELECT * from %s WHERE purchaseid=$1)", purchaseTable)
 	row := r.db.QueryRow(query, purchase.PurchaseId)
 
 	if err := row.Scan(&flagExist); err != nil {
-		response.Status = "Error"
+		response.Name = ""
 		return response, err
 	}
 
 	if !flagExist {
-		response.Status = "Error"
+		response.Name = ""
 		return response, errors.New("Error, wrong id of purchase")
+	} else {
+		r.db.QueryRow(fmt.Sprintf("SELECT name from %s WHERE purchaseid=$1", purchaseTable), purchase.PurchaseId).Scan(&name)
+		response.Name = name
+		return response, nil
 	}
-
-	response.Status = "OK"
-
-	return response, nil
 }
