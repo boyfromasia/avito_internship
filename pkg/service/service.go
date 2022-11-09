@@ -12,6 +12,7 @@ type User interface {
 }
 
 type Purchase interface {
+	GetPurchase(purchase models.GetPurchaseRequest) (models.GetPurchaseResponse, error)
 }
 
 type Order interface {
@@ -34,5 +35,6 @@ func NewService(repos *repository.Repository) *Service {
 		User:        NewUserService(repos.User),
 		Order:       NewOrderService(repos.Order),
 		HistoryUser: NewHistoryUserService(repos.HistoryUser),
+		Purchase:    NewPurchaseService(repos.Purchase),
 	}
 }

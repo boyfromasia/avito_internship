@@ -1,6 +1,9 @@
 package models
 
 type GetPurchaseRequest struct {
-	PurchaseId int    `json:"purchase_id"`
-	Name       string `json:"name"`
+	PurchaseId int `json:"purchase_id" binding:"required"`
+}
+
+type GetPurchaseResponse struct {
+	Status string `json:"status"`
 }

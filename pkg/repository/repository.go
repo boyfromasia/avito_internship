@@ -12,6 +12,7 @@ type User interface {
 }
 
 type Purchase interface {
+	GetPurchase(purchase models.GetPurchaseRequest) (models.GetPurchaseResponse, error)
 }
 
 type Order interface {
@@ -34,5 +35,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		User:        NewUserPostgres(db),
 		Order:       NewOrderPostgres(db),
 		HistoryUser: NewHistoryUserPostgres(db),
+		Purchase:    NewPurchasePostgres(db),
 	}
 }

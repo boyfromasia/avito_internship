@@ -20,6 +20,14 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 		return
 	}
 
+	_, errPurchase := h.services.Purchase.GetPurchase(models.GetPurchaseRequest{
+		PurchaseId: requestOrder.PurchaseId,
+	})
+	if errPurchase != nil {
+		newErrorResponse(c, http.StatusBadRequest, errPurchase.Error())
+		return
+	}
+
 	// reserve user
 	responseUser, errUser := h.services.User.ReserveMoneyUser(models.UserReserveMoneyRequest{
 		UserId: requestOrder.UserId,
@@ -34,11 +42,6 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 		}
 		return
 	}
-
-	//if responseUser.Status == "Error, bot enough money" {
-	//	newErrorResponse(c, http.StatusBadRequest, responseUser.Status)
-	//	return
-	//}
 
 	// create order
 	responseOrder, errOrder := h.services.Order.AddRecord(requestOrder)
