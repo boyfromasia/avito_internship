@@ -24,6 +24,7 @@ type Order interface {
 
 type HistoryUser interface {
 	AddRecordHistory(record models.AddHistoryRequest) (models.AddHistoryResponse, error)
+	GetHistory(record models.GetHistoryRequest) (models.GetHistoryResponse, error)
 }
 
 type Repository struct {

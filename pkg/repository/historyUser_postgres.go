@@ -31,3 +31,28 @@ func (r *HistoryUserPostgres) AddRecordHistory(record models.AddHistoryRequest) 
 
 	return response, nil
 }
+
+func (r *HistoryUserPostgres) GetHistory(record models.GetHistoryRequest) (models.GetHistoryResponse, error) {
+	var history []models.GetHistoryResponseItem
+	var response models.GetHistoryResponse
+
+	if record.Limit == 0 {
+		query := fmt.Sprintf("SELECT cost, comment, timecreated FROM %s WHERE userid=$1 ORDER BY $2 %s LIMIT ALL OFFSET $3", historyUserTable, record.SortType)
+		err := r.db.Select(&history, query, record.UserId, record.SortCol, record.Offset)
+
+		if err != nil {
+			return response, err
+		}
+	} else {
+		query := fmt.Sprintf("SELECT cost, comment, timecreated FROM %s WHERE userid=$1 ORDER BY $2 %s LIMIT $3 OFFSET $4", historyUserTable, record.SortType)
+		err := r.db.Select(&history, query, record.UserId, record.SortCol, record.Limit, record.Offset)
+
+		if err != nil {
+			return response, err
+		}
+	}
+
+	response.History = history
+
+	return response, nil
+}

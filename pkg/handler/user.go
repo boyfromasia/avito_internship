@@ -2,7 +2,6 @@ package handler
 
 import (
 	"avito_internship/pkg/models"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -46,7 +45,7 @@ func (h *Handler) AddBalanceUser(c *gin.Context) {
 	_, errHist := h.services.HistoryUser.AddRecordHistory(models.AddHistoryRequest{
 		UserId:  requestUser.UserId,
 		Comment: "Add to balance from persona X",
-		Cost:    fmt.Sprintf("+%f", requestUser.Balance),
+		Cost:    requestUser.Balance,
 	})
 
 	if errHist != nil {

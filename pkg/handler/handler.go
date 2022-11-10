@@ -20,6 +20,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router.POST("/user", h.AddBalanceUser)
 	router.POST("/order/create", h.CreateOrder)
 	router.POST("/order/decision", h.DecisionOrder)
+	router.GET("/history", h.GetHistory)
 
 	return router
 }

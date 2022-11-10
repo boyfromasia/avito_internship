@@ -53,7 +53,7 @@ func (h *Handler) DecisionOrder(c *gin.Context) {
 		_, errHist := h.services.HistoryUser.AddRecordHistory(models.AddHistoryRequest{
 			UserId:  requestOrder.UserId,
 			Comment: fmt.Sprintf("approve purchase %s", purchaseName.Name),
-			Cost:    fmt.Sprintf("-%f", requestOrder.Price),
+			Cost:    requestOrder.Price * -1,
 		})
 
 		if errHist != nil {
