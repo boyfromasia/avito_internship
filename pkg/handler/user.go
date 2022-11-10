@@ -3,6 +3,7 @@ package handler
 import (
 	"avito_internship/pkg/models"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -11,7 +12,8 @@ func (h *Handler) GetBalanceUser(c *gin.Context) {
 	var response models.UserGetBalanceResponse
 
 	if err := c.BindJSON(&input); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		logrus.Println(err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "Wrong Data")
 		return
 	}
 
@@ -30,7 +32,8 @@ func (h *Handler) AddBalanceUser(c *gin.Context) {
 	var _ models.AddHistoryResponse
 
 	if err := c.BindJSON(&requestUser); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		logrus.Println(err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "Wrong Data")
 		return
 	}
 

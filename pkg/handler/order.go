@@ -4,6 +4,7 @@ import (
 	"avito_internship/pkg/models"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -12,7 +13,8 @@ func (h *Handler) DecisionOrder(c *gin.Context) {
 	var responseOrder models.DecisionReserveResponse
 
 	if err := c.BindJSON(&requestOrder); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		logrus.Println(err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "Wrong Data")
 		return
 	}
 
@@ -81,7 +83,8 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 	var responseUser models.StatusResponse
 
 	if err := c.BindJSON(&requestOrder); err != nil {
-		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		logrus.Println(err.Error())
+		newErrorResponse(c, http.StatusBadRequest, "Wrong Data")
 		return
 	}
 
