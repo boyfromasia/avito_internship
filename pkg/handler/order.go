@@ -88,6 +88,7 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 		return
 	}
 
+	//  check existence of purchase
 	_, errPurchase := h.services.Purchase.GetPurchase(models.GetPurchaseRequest{
 		PurchaseId: requestOrder.PurchaseId,
 	})

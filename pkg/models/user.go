@@ -29,9 +29,23 @@ type UserDecisionRequest struct {
 	Cost   float64 `json:"cost" binding:"required"`
 }
 
+type UserTransferRequest struct {
+	FromId int     `json:"from_id" binding:"required"`
+	ToId   int     `json:"to_id" binding:"required"`
+	Amount float64 `json:"amount" binding:"required"`
+}
+
 func (i UserAddBalanceRequest) Validate() error {
 	if i.Balance < 0 {
 		return errors.New("Wrong input - 'balance'")
+	}
+
+	return nil
+}
+
+func (i UserTransferRequest) Validate() error {
+	if i.Amount < 0 {
+		return errors.New("Wrong input - 'amount'")
 	}
 
 	return nil

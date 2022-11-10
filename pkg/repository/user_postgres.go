@@ -136,3 +136,30 @@ func (r *UserPostgres) RejectReserveUser(user models.UserDecisionRequest) (model
 	response.Status = "OK"
 	return response, nil
 }
+
+func (r *UserPostgres) TransferMoneyUsers(user models.UserTransferRequest) (models.StatusResponse, error) {
+	var response models.StatusResponse
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		response.Status = "Error"
+		return response, errors.New("Error with DB")
+	}
+
+	_, err = tx.Exec(fmt.Sprintf("UPDATE %s SET balance = balance - $1 WHERE userid = $2", usersTable), user.Amount, user.FromId)
+	_, err = tx.Exec(fmt.Sprintf("UPDATE %s SET balance = balance + $1 WHERE userid = $2", usersTable), user.Amount, user.ToId)
+	if err != nil {
+		response.Status = "Error"
+		return response, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		response.Status = "Error"
+		return response, err
+	}
+
+	response.Status = "OK"
+
+	return response, nil
+}

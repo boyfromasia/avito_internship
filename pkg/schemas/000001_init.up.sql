@@ -28,7 +28,7 @@ CREATE TABLE HistoryUser
 (
     HistoryId       SERIAL         PRIMARY KEY,
     UserId          int            REFERENCES  Users    (UserId)      NOT NULL,
-    Cost            varchar(255)   NOT NULL,
+    Cost            float          NOT NULL,
     Comment         varchar(255)   NOT NULL,
     TimeCreated     timestamp      NOT NULL
 );

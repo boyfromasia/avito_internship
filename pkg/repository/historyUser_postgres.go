@@ -37,15 +37,17 @@ func (r *HistoryUserPostgres) GetHistory(record models.GetHistoryRequest) (model
 	var response models.GetHistoryResponse
 
 	if record.Limit == 0 {
-		query := fmt.Sprintf("SELECT cost, comment, timecreated FROM %s WHERE userid=$1 ORDER BY $2 %s LIMIT ALL OFFSET $3", historyUserTable, record.SortType)
-		err := r.db.Select(&history, query, record.UserId, record.SortCol, record.Offset)
+		query := fmt.Sprintf("SELECT cost, comment, timecreated FROM %s WHERE userid=$1 ORDER BY %s %s LIMIT ALL OFFSET $2",
+			historyUserTable, record.SortCol, record.SortType)
+		err := r.db.Select(&history, query, record.UserId, record.Offset)
 
 		if err != nil {
 			return response, err
 		}
 	} else {
-		query := fmt.Sprintf("SELECT cost, comment, timecreated FROM %s WHERE userid=$1 ORDER BY $2 %s LIMIT $3 OFFSET $4", historyUserTable, record.SortType)
-		err := r.db.Select(&history, query, record.UserId, record.SortCol, record.Limit, record.Offset)
+		query := fmt.Sprintf("SELECT cost, comment, timecreated FROM %s WHERE userid=$1 ORDER BY %s %s LIMIT $2 OFFSET $3",
+			historyUserTable, record.SortCol, record.SortType)
+		err := r.db.Select(&history, query, record.UserId, record.Limit, record.Offset)
 
 		if err != nil {
 			return response, err

@@ -11,6 +11,7 @@ type User interface {
 	ReserveMoneyUser(user models.UserReserveMoneyRequest) (models.StatusResponse, error)
 	ApproveReserveUser(user models.UserDecisionRequest) (models.StatusResponse, error)
 	RejectReserveUser(user models.UserDecisionRequest) (models.StatusResponse, error)
+	TransferMoneyUsers(user models.UserTransferRequest) (models.StatusResponse, error)
 }
 
 type Purchase interface {
